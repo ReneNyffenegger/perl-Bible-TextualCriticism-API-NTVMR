@@ -1,0 +1,10 @@
+*.swp
+Makefile
+Makefile.old
+MYMETA.json
+MYMETA.yml
+blib
+MANIFEST.bak
+MANIFEST.SKIP
+pm_to_blib
+Bible-TextualCriticism-API-NTVMR-*
