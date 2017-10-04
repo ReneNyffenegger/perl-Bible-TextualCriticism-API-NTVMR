@@ -7,11 +7,11 @@ use Bible::TextualCriticism::API::NTVMR;
 
 my $ntvmr = Bible::TextualCriticism::API::NTVMR->new();
 
-my @documents = $ntvmr->documents;
+my @manuscripts = $ntvmr->manuscripts;
 
-ok(scalar @documents >= 6042);
+ok(scalar @manuscripts >= 6042);
 
-for my $doc (@documents) {
+for my $doc (@manuscripts) {
 
   if ($doc->{docID} == 10001) {
 

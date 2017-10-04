@@ -64,24 +64,24 @@ sub new { #_{
   return $self;
 
 } #_}
-sub documents { #_{
+sub manuscripts { #_{
 #_{ POD
 
 =head2 new
 
-    my @documents = $ntvmr -> documents;
+    my @manuscripts = $ntvmr -> manuscripts;
 
-Return the list of documents.
+Returns the list of manuscripts.
 
-The elements in C<< @documents >> are references to a hash with the following keys:
+The elements in C<< @manuscripts >> are references to a hash with the following keys:
 
-    for my $doc (@documents) {
+    for my $doc (@manuscripts) {
 
       $doc->{docID};
       $doc->{primaryName}; # e.g. P19, 02, 212, l 1, sa 8, Syr1, Eth1, Arm1, ms.or.377, Ra 2038 etc.
       $doc->{gaNum};       # The Gregory Aland number (P1 etc.)
-      $doc->{orig};        # e.g. III, VI/VII, III(A) etc. orig seems to indicate the century of assumed(?) writing the document.
-      $doc->{lang};        # e.g. grc.  The language of the document.
+      $doc->{orig};        # e.g. III, VI/VII, III(A) etc. orig seems to indicate the century of assumed(?) writing the manuscript.
+      $doc->{lang};        # e.g. grc.  The language of the manuscript.
 
     }
 
@@ -95,8 +95,8 @@ The elements in C<< @documents >> are references to a hash with the following ke
 
   my $xp = XML::XPath->new(xml => $resp->content);
 
-# my $document_count = $xp->findvalue('/manuscripts/@count');
-# print "document_count = $document_count\n";
+# my $manuscript_count = $xp->findvalue('/manuscripts/@count');
+# print "manuscript_count = $manuscript_count\n";
 
   my @ret;
   my @doc_nodes = $xp->findnodes('/manuscripts/manuscript');
@@ -104,7 +104,7 @@ The elements in C<< @documents >> are references to a hash with the following ke
   for my $doc_node (@doc_nodes) {
 
     my $doc = {};
-    for my $attrib_name (qw(docID primaryName gaNum orig v11n lang)) {# Apparently, the attributes userID, groupID and v11n are always empty
+    for my $attrib_name (qw(docID primaryName gaNum orig v11n lang)) { # Apparently, the attributes userID, groupID and v11n are always empty
 
       my $attrib_value = $doc_node->findvalue("\@$attrib_name");
 #     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'userID'  and $attrib_value;
