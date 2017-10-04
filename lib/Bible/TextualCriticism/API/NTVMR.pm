@@ -12,6 +12,10 @@ package Bible::TextualCriticism::API::NTVMR;
 use warnings;
 use strict;
 
+use HTTP::Request;
+use LWP::UserAgent;
+use XML::XPath;
+
 use utf8;
 use Carp;
 
@@ -55,10 +59,97 @@ sub new { #_{
   my $self = {};
   bless $self, $class;
 
+  $self->{ua} = LWP::UserAgent->new();
+
   return $self;
 
 } #_}
+sub documents { #_{
+#_{ POD
 
+=head2 new
+
+    my @documents = $ntvmr -> documents;
+
+Return the list of documents.
+
+The elements in C<< @documents >> are references to a hash with the following keys:
+
+    for my $doc (@documents) {
+
+      $doc->{docID};
+      $doc->{primaryName}; # e.g. P19, 02, 212, l 1, sa 8, Syr1, Eth1, Arm1, ms.or.377, Ra 2038 etc.
+      $doc->{gaNum};       # The Gregory Aland number (P1 etc.)
+      $doc->{orig};        # e.g. III, VI/VII, III(A) etc. orig seems to indicate the century of assumed(?) writing the document.
+      $doc->{lang};        # e.g. grc.  The language of the document.
+
+    }
+
+=cut
+
+#_}
+
+  my $self = shift;
+  my $resp = $self->_request('metadata/liste/get/');
+
+
+  my $xp = XML::XPath->new(xml => $resp->content);
+
+# my $document_count = $xp->findvalue('/manuscripts/@count');
+# print "document_count = $document_count\n";
+
+  my @ret;
+  my @doc_nodes = $xp->findnodes('/manuscripts/manuscript');
+
+  for my $doc_node (@doc_nodes) {
+
+    my $doc = {};
+    for my $attrib_name (qw(docID primaryName gaNum orig v11n lang)) {# Apparently, the attributes userID, groupID and v11n are always empty
+
+      my $attrib_value = $doc_node->findvalue("\@$attrib_name");
+#     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'userID'  and $attrib_value;
+#     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'groupID' and $attrib_value;
+#     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'v11n' and $attrib_value;
+
+      $doc->{$attrib_name} = $attrib_value;
+    }
+    push @ret, $doc;
+
+  }
+
+  return @ret;
+
+} #_}
+sub _request { #_{
+#_{ POD
+
+=head2 _request
+
+    my $resp = $self->_request('metadata/liste/get/)'; 
+
+Internal function to request a resource.
+
+=cut
+
+#_}
+  
+  my $self = shift;
+  my $path = shift;
+
+  my $req  = HTTP::Request->new(GET=>"http://ntvmr.uni-muenster.de/community/vmr/api/$path");
+  my $resp = $self->{ua}->request($req);
+
+  if ($resp->code != 200) {
+    croak "path $path caused " . $resp->code . " " . $resp->message;
+    return;
+  }
+
+# resp is a HTTP::Response
+# print "resp = $resp\n";
+
+  return $resp;
+
+} #_}
 #_}
 #_{ POD: Author
 

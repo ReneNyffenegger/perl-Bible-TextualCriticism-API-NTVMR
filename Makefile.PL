@@ -18,7 +18,9 @@ WriteMakefile(
         'ExtUtils::MakeMaker' => 0,
     },
     PREREQ_PM => {
-#     '' => 0
+      'HTTP::Request'          => 0,
+      'LWP::UserAgent'         => 0,
+      'XML::XPath'             => 0,
     },
     BUILD_REQUIRES => {
         'Test::Simple' => 0,
