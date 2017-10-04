@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 4;
+use Test::More tests => 3;
 
 use Bible::TextualCriticism::API::NTVMR;
 
@@ -15,7 +15,7 @@ for my $doc (@manuscripts) {
 
   if ($doc->{docID} == 10001) {
 
-    is($doc->{primaryName}, 'P1' );
+#   is($doc->{primaryName}, 'P1' );
     is($doc->{gaNum      }, 'P1' );
     is($doc->{orig       }, 'III');
 

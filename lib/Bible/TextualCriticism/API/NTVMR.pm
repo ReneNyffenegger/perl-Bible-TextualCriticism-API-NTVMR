@@ -75,15 +75,18 @@ Returns the list of manuscripts.
 
 The elements in C<< @manuscripts >> are references to a hash with the following keys:
 
-    for my $doc (@manuscripts) {
+    for my $ms (@manuscripts) {
 
-      $doc->{docID};
-      $doc->{primaryName}; # e.g. P19, 02, 212, l 1, sa 8, Syr1, Eth1, Arm1, ms.or.377, Ra 2038 etc.
-      $doc->{gaNum};       # The Gregory Aland number (P1 etc.)
-      $doc->{orig};        # e.g. III, VI/VII, III(A) etc. orig seems to indicate the century of assumed(?) writing the manuscript.
-      $doc->{lang};        # e.g. grc.  The language of the manuscript.
+      $ms->{docID};
+      $ms->{gaNum};       # The Gregory Aland number (P19, 02, 212, l 1, sa 8, Syr1, Eth1, Arm1, ms.or.377, Ra 2038 etc.
+      $ms->{orig};        # e.g. III, VI/VII, III(A) etc. orig seems to indicate the century of assumed(?) writing the manuscript.
+      $ms->{lang};        # e.g. grc.  The language of the manuscript.
 
     }
+
+The API also returns the attributes C<userID>, C<groupID> and C<V11n> whose values always seem to be empty. So, these are not returned.
+
+The values of the attributes C<primaryName> and C<gaNum> seems to be always identical. So, only C<gaNum> is returned.
 
 =cut
 
@@ -103,17 +106,22 @@ The elements in C<< @manuscripts >> are references to a hash with the following 
 
   for my $doc_node (@doc_nodes) {
 
-    my $doc = {};
-    for my $attrib_name (qw(docID primaryName gaNum orig v11n lang)) { # Apparently, the attributes userID, groupID and v11n are always empty
+    my $ms = {};
+    for my $attrib_name (qw(docID gaNum orig v11n lang)) { # userID groupID v11n primName
 
       my $attrib_value = $doc_node->findvalue("\@$attrib_name");
 #     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'userID'  and $attrib_value;
 #     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'groupID' and $attrib_value;
 #     print "$attrib_name -> $attrib_value\n" if $attrib_value eq 'v11n' and $attrib_value;
 
-      $doc->{$attrib_name} = $attrib_value;
+      $ms->{$attrib_name} = $attrib_value;
     }
-    push @ret, $doc;
+
+#   if ($ms->{primaryName} ne $ms->{gaNum}) {
+#      print "Difference in primName and gaNum: $ms->{primaryName} <-> $ms->{gaNum}\n";
+#   }
+
+    push @ret, $ms;
 
   }
 
